@@ -1,0 +1,197 @@
+<!-- import polymer -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<!-- import page level css -->
+<link rel="import" href="je-app-styles.html">
+
+<!-- app route -->
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<!-- px components -->
+<link rel="import" href="../../bower_components/px-view/px-view.html">
+<!-- seed app components -->
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<!-- importing font awesome and iron icon here, to fix icon flickering problem when loading asynchronously. -->
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/px-polymer-font-awesome/px-polymer-font-awesome.html">
+
+<dom-module id="je-app">
+    <template>
+
+    <!-- apply imported seed app style module -->
+    <style include="je-app-styles"></style>
+
+    <header role="banner">
+      <div class="viewport flex flex--justify flex--middle">
+        <h3>
+          JSON Editor
+        </h3>
+        <div id="loginDiv">
+
+        </div>
+      </div>
+    </header>
+
+    <div class="viewport">
+
+      <div class="content-wrapper">
+
+        <main class="" role="main">
+
+          <!-- app-location captures url and assigns _route value -->
+          <app-location
+            id="carbonLocation"
+            route="{{_route}}"
+            use-hash-as-path>
+          </app-location>
+
+          <!-- main /rmd route and view -->
+          <app-route
+            route="[[_route]]"
+            pattern="/editor"
+            active="{{_editorActive}}">
+          </app-route>
+          <px-view id="editorView"
+            active="[[_editorActive]]"
+            element-href="/elements/views/editor-view/editor-view.html"
+            load-async="true">
+          </px-view>
+
+        </main>
+
+      </div>
+    </div>
+
+    <og-demo-footer footer-links="[[footerLinks]]"></og-demo-footer>
+  </template>
+    <script>
+        Polymer({
+            is: 'je-app',
+
+            properties: {
+                currentUser: {
+                    type: String
+                },
+
+                appHeader: {
+                    type: String
+                },
+
+                routesActive: {
+                    type: Boolean,
+                    value: false
+                },
+
+                //Global application object
+                global: {
+                    type: Object,
+                    value: function() {
+                        return {
+                            version: '1.0',
+                            name: 'JSON Editor'
+                        }
+                    }
+                },
+
+                // Links to appear in the main navigation - px-app-nav component
+                // See http://fontawesome.io/icons/ for available icons
+                navItems: {
+                    type: Array,
+                    value: function() {
+                        return [{
+                                "label": "Editor",
+                                "path": "/editor",
+                                "icon": "px-fea:products",
+                                "clazz": "nav-editor"
+                            },
+                            {
+                                "label": "about",
+                                "path": "/about",
+                                "icon": "px-fea:about",
+                                "clazz": "nav-about"
+                            }
+                        ]
+                    }
+                },
+                subNavItems: {
+                    type: Array,
+                    notify: true,
+                    value: function() {
+                        return [];
+                    }
+                },
+                footerLinks: {
+                    type: Array,
+                    value: function() {
+                        return [];
+                    }
+                },
+
+                // Sets app default base URL for client-side routing
+                pathPrefix: {
+                    type: String,
+                    value: '#'
+                }
+            },
+
+            observers: ['_routeChanged(_route)'],
+
+            ready: function() {
+                // this.$.userInfoAjax.generateRequest();
+                // this._checkForDefaultRoute();
+                // this.$.configAjaxEl.addEventListener('response', function(evt) {
+                //     this.appHeader = evt.detail.response.appHeader;
+                // }.bind(this));
+                // this.$.analyticsConfig.generateRequest();
+            },
+
+            _checkForDefaultRoute: function() {
+                //console.log('default path');
+                // set default route to /rmd
+                var l = window.location;
+                if ((l.hash === "#/" || l.hash === "") && l.pathname === "/" || l.pathname === "/index.html") {
+                    l.hash = "/editor";
+                }
+            },
+            _routeChanged: function(newRoute) {
+                //
+                // if (newRoute.path !== '/demos') {
+                //     var tsChart = document.querySelector('rmd-view timeseries-chart');
+                //     if (tsChart) {
+                //         tsChart.closeWebSocket();
+                //     }
+                // }
+            },
+            _setUserInfoAndUpdateMenuItems: function(response) {
+                var userInfo = response.detail.response;
+                window.userInfo = userInfo;
+                if (userInfo && userInfo.acs) {
+                    let acs = userInfo.acs;
+                    if (!(acs.superadmin || (acs.admin && acs.admin.length > 0))) {
+                        //hide analytics and dashboard for normal users
+                        let temp = [];
+                        this.navItems.forEach(x => {
+                            if (x.label !== "Analytics" && x.label != "Dashboard" && x.label != "Admin") {
+                                temp.push(x);
+                            }
+                        });
+                        this.subNavItems = temp;
+                    } else if (!acs.superadmin && (acs.admin && acs.admin.length > 0)) {
+                        //hide dashboard for admin users
+                        let temp = [];
+                        this.navItems.forEach(x => {
+                            if (x.label != "Dashboard" && x.label != "Admin") {
+                                temp.push(x);
+                            }
+                        });
+                        this.subNavItems = temp;
+                    } else {
+                        this.subNavItems = this.navItems;
+                    }
+                }
+            }
+
+        });
+    </script>
+</dom-module>
