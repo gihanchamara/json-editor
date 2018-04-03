@@ -49,7 +49,8 @@
     "px-meta-lists-design": "^1.0.1",
     "px-forms-design": "^2.0.6",
     "px-icon-set": "px-polymer-font-awesome#^2.1.8",
-    "iron-icon": "^2.1.0"
+    "iron-icon": "^2.1.0",
+    "paper-input": "^2.2.1"
   },
   "resolutions": {
     "px-app-helpers": "^2.0.0",

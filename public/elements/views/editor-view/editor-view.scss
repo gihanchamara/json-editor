@@ -1,3 +1,13 @@
+
+:host{
+  background: white;
+}
 #main-container{
   color:red;
+}
+
+paper-textarea{
+  color: gray;
+  max-height: 200px;
+  overflow-y: scroll;
 }

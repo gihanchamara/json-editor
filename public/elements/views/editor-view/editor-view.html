@@ -1,21 +1,81 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="editor-view-styles.html">
+
 
 <dom-module id="editor-view">
   <style include="editor-view-styles"></style>
   <template>
     <div id="main-container">
-      Welcome to JSON Editor
+      <div id ="src-section">
+        <paper-textarea  value="{{srcContent}}" label="Src JSON"></paper-textarea>
+      </div>
+      <div id  ="script-section">
+        <paper-textarea value="{{scriptContent}}" label="JS Script"></paper-textarea>
+      </div>
+      <div id ="result-section">
+        <paper-textarea value="{{resultContent}}" label="Output"></paper-textarea>
+      </div>
+      <div id ="log-section">
+        <paper-textarea  value="{{logContent}}" label="Log"></paper-textarea>
+      </div>
+      <button on-tap="_onRunInput">Run on input</button>
+      <button on-tap="_onRunOutput">Run on output</button>
     </div>
   </template>
   <script>
     Polymer({
       is: 'editor-view',
 
-      properties: {},
+      properties: {
+        srcContent: {
+            type: String
+        },
+        scriptContent: {
+            type: String
+        },
+        resultContent: {
+            type: String
+        },
+        logContent: {
+            type: String
+        }
+      },
 
-      ready: function() {}
+      ready: function() {
+        this.srcContent='{"a":2}';
+        this.scriptContent   = '';
+      },
+      _onRunInput: function(){
+        try{
+          let inJson = JSON.parse(this.srcContent);
+          this._runScript(inJson);
+        }catch(e){
+          this.logContent = e;
+        }
+
+      },
+      _onRunOutput: function(){
+        try{
+          let resJson = JSON.parse(this.resultContent);
+          this._runScript(resJson);
+        }catch(e){
+          this.logContent = e;
+        }
+
+      },
+      _runScript: function(input){
+        try{
+          let funcStr = "(function f(src){ "+ this.scriptContent+ " return src;})";
+          let f =eval(funcStr);
+          this.resultContent= JSON.stringify(f(input));
+
+        }catch(e){
+          this.logContent = e;
+        }
+      }
+
     });
   </script>
 </dom-module>
