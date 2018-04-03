@@ -13,16 +13,7 @@ module.exports = function(gulp) {
     // (Whenever possible files should be imported using HTML imports, so they're included in the polymer build.)
     var extraDirectories = [
       'public/bower_components/polymer',
-      'public/bower_components/webcomponentsjs',
-
-      'public/bower_components/px-typography-design',
-      'public/bower_components/px-theme',
-      'public/bower_components/px-dark-theme',
-      'public/bower_components/px-vis',
-      'public/bower_components/pxd3',
-      'public/downloads',
-
-      'public/elements/dev-guide'
+      'public/bower_components/webcomponentsjs'
     ];
 
     var extraStreams = [];
