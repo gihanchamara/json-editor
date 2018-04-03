@@ -48,8 +48,8 @@ gulp.task('watch:public', getTask('watch.public'));
 // -----------------------------------------------------------------------------
 gulp.task('dist', function(cb) {
 	gulpSequence(
-		'dist:clean', 
-		'compile:index', 
+		'dist:clean',
+		'compile:index',
 		'polymer:cli',
 		'dist:copy'
 	)(cb);
@@ -74,5 +74,5 @@ gulp.task('default', function (cb) {
 		gulpSequence('compile:index', 'watch:public', 'serve:dev:start')(cb);
 	} else {
 		gulpSequence('serve:dist:start')(cb);
-	}	
+	}
 });

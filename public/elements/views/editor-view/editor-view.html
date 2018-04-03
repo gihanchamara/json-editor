@@ -24,7 +24,9 @@
       <button on-tap="_onRunInput">Run on input</button>
       <button on-tap="_onRunOutput">Run on output</button>
       <button on-tap="_onPrettyOutput">Pretty</button>
-      <div>        
+      <button on-tap="_onLogInput">log Input</button>
+      <button on-tap="_onLogOutput">log Output</button>
+      <div>
         <html-echo id="pretty-section" html="{{prettyJson}}"></html-echo>
       </div>
     </div>
@@ -54,6 +56,12 @@
       ready: function() {
         this.srcContent='{"a":2}';
         this.scriptContent   = '';
+      },
+      _onLogInput:function(){
+        console.log("input",this.srcContent);
+      },
+      _onLogOutput:function(){
+        console.log("input",this.resultContent);
       },
       _onRunInput: function(){
         try{
