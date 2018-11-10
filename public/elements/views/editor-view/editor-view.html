@@ -1,21 +1,121 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../../bower_components/html-echo/html-echo.html">
 <link rel="import" href="editor-view-styles.html">
+
 
 <dom-module id="editor-view">
   <style include="editor-view-styles"></style>
   <template>
     <div id="main-container">
-      Welcome to JSON Editor
+      <div id ="src-section">
+        <paper-textarea  value="{{srcContent}}" label="Src JSON"></paper-textarea>
+      </div>
+      <div id  ="script-section">
+        <paper-textarea value="{{scriptContent}}" label="JS Script"></paper-textarea>
+      </div>
+      <div id ="result-section">
+        <paper-textarea value="{{resultContent}}" label="Output"></paper-textarea>
+      </div>
+      <div id ="log-section">
+        <paper-textarea  value="{{logContent}}" label="Log"></paper-textarea>
+      </div>
+      <button on-tap="_onRunInput">Run on input</button>
+      <button on-tap="_onRunOutput">Run on output</button>
+      <button on-tap="_onPrettyOutput">Pretty</button>
+      <button on-tap="_onLogInput">log Input</button>
+      <button on-tap="_onLogOutput">log Output</button>
+      <div>
+        <html-echo id="pretty-section" html="{{prettyJson}}"></html-echo>
+      </div>
     </div>
   </template>
   <script>
     Polymer({
       is: 'editor-view',
 
-      properties: {},
+      properties: {
+        srcContent: {
+            type: String
+        },
+        scriptContent: {
+            type: String
+        },
+        resultContent: {
+            type: String
+        },
+        logContent: {
+            type: String
+        },
+        prettyJson: {
+          type:String
+        }
+      },
 
-      ready: function() {}
+      ready: function() {
+        this.srcContent='{"a":2}';
+        this.scriptContent   = '';
+      },
+      _onLogInput:function(){
+        console.log("input",this.srcContent);
+      },
+      _onLogOutput:function(){
+        console.log("input",this.resultContent);
+      },
+      _onRunInput: function(){
+        try{
+          let inJson = JSON.parse(this.srcContent);
+          this._runScript(inJson);
+        }catch(e){
+          this.logContent = e;
+        }
+
+      },
+      _onRunOutput: function(){
+        try{
+          let resJson = JSON.parse(this.resultContent);
+          this._runScript(resJson);
+        }catch(e){
+          this.logContent = e;
+        }
+
+      },
+      _onPrettyOutput:function(){
+        this.prettyJson = '<pre> '+ this._syntaxHighlight(this.resultContent)+'</pre>';
+      },
+      _runScript: function(input){
+        try{
+          let funcStr = "(function f(src){ "+ this.scriptContent+ " return src;})";
+          let f =eval(funcStr);
+          this.resultContent= JSON.stringify(f(input),null,2);
+
+        }catch(e){
+          this.logContent = e;
+        }
+      },
+      _syntaxHighlight: function(json) {
+          if (typeof json != 'string') {
+               json = JSON.stringify(json, null, 2);
+          }
+          json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+              var cls = 'number';
+              if (/^"/.test(match)) {
+                  if (/:$/.test(match)) {
+                      cls = 'key';
+                  } else {
+                      cls = 'string';
+                  }
+              } else if (/true|false/.test(match)) {
+                  cls = 'boolean';
+              } else if (/null/.test(match)) {
+                  cls = 'null';
+              }
+              return '<span class="' + cls + ' style-scope editor-view">' + match + '</span>';
+          });
+      }
+
     });
   </script>
 </dom-module>

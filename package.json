@@ -1,22 +1,21 @@
 {
-  "name": "predix-webapp-starter",
+  "name": "jsoneditor",
   "version": "2.0.39",
   "private": true,
   "engines": {
     "node": ">=0.10.0"
   },
   "author": {
-    "name": "Predix Adoption",
-    "email": "predix.adoption@ge.com"
+    "name": "Gihan",
+    "email": "gihan.chamara@gmail.com"
   },
   "scripts": {
     "start": "node server/app.js",
     "test": "node_modules/mocha/bin/mocha test/server"
   },
   "keywords": [
-    "predix-ui-seed",
-    "predix-seed",
-    "predix-webapp-starter"
+    "Json editor",
+    "online json editor"
   ],
   "devDependencies": {
     "chai": "^3.5.0",
